@@ -1,0 +1,153 @@
+#include <Wire.h>
+#include <SPI.h>
+#include <Servo.h>
+
+Servo myservo1;
+Servo myservo2;
+char val=0;
+int angle1 = 90;
+int angle2 = 90;
+
+
+double gak2 = 0;
+double gak1 = 0;
+double gak4 = 0;
+double gak3 = 0;
+
+int onOff = 1;
+int mode = 1;
+int a = 1;
+
+void setup()
+{
+  pinMode(2, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  myservo1.attach(12);  //servo motor 연결핀 설정(디지털 12번핀)
+  myservo2.attach(11);  //servo motor 연결핀 설정(디지털 12번핀)
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  if (Serial.available()){
+  val=(char) Serial.read();
+  
+   
+  Serial.print(val);
+  
+  if(val=='0')
+  {
+    gak1 = 10;
+  }
+  else if(val=='1')
+  {
+    gak1 = 30;
+  }
+  else if(val=='2')
+  {
+    gak1 = 50;
+  }
+  else if(val=='3')
+  {
+    gak1 = 70;
+  }
+  else if(val=='4')
+  {
+    gak1 = 90;
+  }
+  else if(val=='5')
+  {
+    gak1 =110;
+  }
+  else if(val=='6')
+  {
+    gak1 = 130;
+  }
+  else if(val=='7')
+  {
+    gak1 = 150;
+  }
+  else if(val=='8')
+  {
+    gak1 = 170;
+  }  
+  else if(val=='a')
+  {
+      mode = -2; 
+  }  
+  else if(val=='b')
+  {
+      mode = 1;
+  }  
+  else if(val=='o')
+  {
+      onOff = -2;
+  }  
+  else if(val=='f')
+  {
+      onOff = 1;    
+  }  
+
+ 
+  if (onOff == 1)
+  {
+    if (mode == 1)
+    {
+      gak1 = 180-gak1;
+      if (angle1 < gak1)
+      {
+        for (angle1 = gak2; angle1 < gak1 ; angle1 += 1) //0도에서 180도까지 1도씩움직임
+        {
+          myservo1.write(angle1);
+        }
+      }
+      else if (angle1 >= gak1)
+      {
+        for (angle1 = gak2; angle1 > gak1; angle1 -= 1)  //180도에서 0도까지 1도씩움직임
+        {
+          myservo1.write(angle1);              //angle2 변수의 각도만큼 움직여라 (1도씩증가)
+        }
+        gak2 = gak1;
+        angle1 = gak1;
+
+      }
+      delay(50);
+     }
+      else
+      {
+        if (angle2 < gak1)
+        {
+          for (angle2 = gak2; angle2 < gak1; angle2 += 1) //0도에서 180도까지 1도씩움직임
+          {
+            myservo2.write(angle2);              //angle2 변수의 각도만큼 움직여라 (1도씩증가)
+          }
+        }
+        else if (angle2 >= gak1)
+        {
+          for (angle2 = gak2; angle2 > gak1; angle2 -= 1)  //180도에서 0도까지 1도씩움직임
+          {
+            myservo2.write(angle2);              //angle2 변수의 각도만큼 움직여라 (1도씩증가)
+          }
+          gak2 = gak1;
+          angle2 = gak1;
+        }
+        delay(50);
+      }
+    }
+  }
+  
+  if(onOff==1) digitalWrite(2, HIGH);  // turn the LED on (HIGH is the voltage level)
+  else digitalWrite(2, LOW);           // wait for a second
+  if(mode==1) 
+  {
+    digitalWrite(4, HIGH);
+    digitalWrite(5, LOW); 
+  }
+  else 
+  {
+    digitalWrite(4, LOW);
+    digitalWrite(5, HIGH); 
+  }
+  
+ }
